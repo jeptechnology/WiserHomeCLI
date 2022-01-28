@@ -42,7 +42,7 @@ namespace // local
    }
 
    std::unique_ptr<RestApiClient> restApiService;
-   std::vector<std::string> commands { "get", "set", "post", "patch", "delete", "put" };
+   std::vector<std::string> commands { "get", "getPSK", "set", "post", "patch", "delete", "put" };
 
    void completionHook(const char* editBuffer, std::vector<std::string>& completions)
    {
@@ -99,6 +99,7 @@ int main(int argc, char *argv[])
    }
 
    std::string baseurl = argv[1];
+   std::string apiKey = argc > 2 ? argv[2] : "";
 
    const auto path = "history.txt";
 
@@ -108,7 +109,7 @@ int main(int argc, char *argv[])
    // Set max length of the history
    linenoise::SetHistoryMaxLen(32);
 
-   restApiService = std::make_unique<RestApiClient>(baseurl);
+   restApiService = std::make_unique<RestApiClient>(baseurl, apiKey);
 
    // Setup completion words every time when a user types
    linenoise::SetCompletionCallback(completionHook);
@@ -148,6 +149,10 @@ int main(int argc, char *argv[])
       if (command == "get")
       {
          std::cout << restApiService->Get(url) << std::endl;
+      }
+      else if (command == "getPSK")
+      {
+         std::cout << restApiService->GetPSK() << std::endl;
       }
       else if (command == "post")
       {

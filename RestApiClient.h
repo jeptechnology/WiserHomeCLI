@@ -9,12 +9,14 @@ namespace httplib
 class RestApiClient
 {
    httplib::Client *m_cli;
+   const std::string& m_apiKey;
 
 public:
-   RestApiClient(const std::string& baseUrl);
+   RestApiClient(const std::string& baseUrl, const std::string& apiKey = "");
    ~RestApiClient();
 
    std::string Prompt();
+   std::string GetPSK();
    std::string Get(const std::string& path);
    std::string Delete(const std::string& path);
    std::string Post(const std::string& path, const std::string& body);

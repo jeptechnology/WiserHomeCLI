@@ -38,9 +38,10 @@ namespace
    }
 }
 
-RestApiClient::RestApiClient(const std::string& url)
+RestApiClient::RestApiClient(const std::string& url, const std::string& apikey)
+   : m_cli(new httplib::Client(url))
+   , m_apiKey(apikey)
 {
-   m_cli = new httplib::Client(url);
 }
 
 RestApiClient::~RestApiClient()
@@ -48,29 +49,39 @@ RestApiClient::~RestApiClient()
    delete m_cli;
 }
 
+std::string RestApiClient::GetPSK()
+{
+   return ProcessResponse(m_cli->Get("/secret"));
+}
+
 std::string RestApiClient::Get(const std::string& url)
 {
-   return ProcessResponse(m_cli->Get(url.c_str()));
+   httplib::Headers headers = { { "secret", m_apiKey } };
+   return ProcessResponse(m_cli->Get(url.c_str(), headers));
 }
 
 std::string RestApiClient::Delete(const std::string& url)
 {
-   return ProcessResponse(m_cli->Delete(url.c_str()));
+   httplib::Headers headers = { { "secret", m_apiKey } };
+   return ProcessResponse(m_cli->Delete(url.c_str(), headers));
 }
 
 std::string RestApiClient::Post(const std::string& url, const std::string& body)
 {
-   return ProcessResponse(m_cli->Post(url.c_str(), body, "applicaiton/json"));
+   httplib::Headers headers = { { "secret", m_apiKey } };
+   return ProcessResponse(m_cli->Post(url.c_str(), headers,  body, "applicaiton/json"));
 }
 
 std::string RestApiClient::Patch(const std::string& url, const std::string& body)
 {
-   return ProcessResponse(m_cli->Patch(url.c_str(), body, "applicaiton/json"));
+   httplib::Headers headers = { { "secret", m_apiKey } };
+   return ProcessResponse(m_cli->Patch(url.c_str(), headers, body, "applicaiton/json"));
 }
 
 std::string RestApiClient::Put(const std::string& url, const std::string& body)
 {
-   return ProcessResponse(m_cli->Put(url.c_str(), body, "applicaiton/json"));
+   httplib::Headers headers = { { "secret", m_apiKey } };
+   return ProcessResponse(m_cli->Put(url.c_str(), headers, body, "applicaiton/json"));
 }
 
 std::string RestApiClient::Prompt()
